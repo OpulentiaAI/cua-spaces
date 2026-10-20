@@ -18,6 +18,8 @@ name = "cua-spaces"
 path = "src/main.rs"
 
 [features]
+default = ["contrib-e2b"]
+contrib-e2b = ["dep:cua-contrib", "cua-contrib/e2b", "cua-daemon/contrib-e2b"]
 # Serve the built UI (../dist) from the binary instead of the dev server, as
 # `tauri build` does (tests/webview_isolation.rs builds with it).
 custom-protocol = ["tauri/custom-protocol"]
@@ -74,6 +76,7 @@ cua-spaces-app-core = { path = "../../../libs/cua/crates/cua-spaces-app-core", f
 cua-keyvault = { path = "../../../libs/cua/crates/cua-keyvault" }
 cua-proto = { path = "../../../libs/cua/crates/cua-proto", default-features = false, features = ["client", "serde"] }
 cua-sandbox-core = { path = "../../../libs/cua/crates/cua-sandbox-core" }
+cua-contrib = { path = "../../../libs/cua/crates/cua-contrib", optional = true }
 # "This machine" host setup (service install, relay registration, sharing):
 # the same library `cua host …` uses.
 cua-host = { path = "../../../libs/cua/crates/cua-host" }

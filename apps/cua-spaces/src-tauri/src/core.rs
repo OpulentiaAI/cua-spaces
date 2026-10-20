@@ -814,6 +814,10 @@ impl AppCore {
             Some(self.app_sessions.clone()),
         );
         let mut sandboxes = cua_sandbox_core::Sandboxes::builder();
+        #[cfg(feature = "contrib-e2b")]
+        for provider in cua_contrib::providers() {
+            sandboxes = sandboxes.provider(provider);
+        }
         if let Some(l) = &p.local_runtime {
             b = b.local_runtime(l.clone());
             sandboxes = sandboxes.local(l.clone());
