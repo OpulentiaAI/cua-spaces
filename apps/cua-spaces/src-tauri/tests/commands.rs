@@ -39,7 +39,6 @@ async fn native_app_registers_e2b_without_a_local_runtime_or_sign_in() {
             .name(),
         "e2b"
     );
-    assert!(cua_daemon::runtime::contrib_provider_names().contains(&"e2b".to_string()));
     assert_eq!(app.set_default_location("e2b").unwrap().value, "e2b");
 }
 

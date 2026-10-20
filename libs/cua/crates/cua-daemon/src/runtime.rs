@@ -180,13 +180,52 @@ pub fn contrib_provider_names() -> Vec<String> {
 /// The contrib providers this build includes, configured from the
 /// environment and `cua auth provider set` (feature `contrib`).
 fn default_providers() -> Vec<Arc<dyn cua_sandbox_core::Provider>> {
-    #[cfg(feature = "contrib")]
+    #[cfg(any(
+        feature = "contrib",
+        feature = "contrib-e2b",
+        feature = "contrib-daytona",
+        feature = "contrib-modal"
+    ))]
     {
         cua_contrib::providers()
     }
-    #[cfg(not(feature = "contrib"))]
+    #[cfg(not(any(
+        feature = "contrib",
+        feature = "contrib-e2b",
+        feature = "contrib-daytona",
+        feature = "contrib-modal"
+    )))]
     {
         Vec::new()
+    }
+}
+
+#[cfg(test)]
+mod provider_features {
+    #[test]
+    fn registers_every_enabled_contrib_provider() {
+        let mut expected: Vec<String> = [
+            (
+                "e2b",
+                cfg!(any(feature = "contrib", feature = "contrib-e2b")),
+            ),
+            (
+                "daytona",
+                cfg!(any(feature = "contrib", feature = "contrib-daytona")),
+            ),
+            (
+                "modal",
+                cfg!(any(feature = "contrib", feature = "contrib-modal")),
+            ),
+        ]
+        .into_iter()
+        .filter(|(_, enabled)| *enabled)
+        .map(|(name, _)| name.to_string())
+        .collect();
+        expected.sort();
+        let mut actual = super::contrib_provider_names();
+        actual.sort();
+        assert_eq!(actual, expected);
     }
 }
 
