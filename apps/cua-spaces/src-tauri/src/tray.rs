@@ -197,12 +197,17 @@ pub fn set_space_count(app: &AppHandle, spaces: usize) {
     let Some(status) = app.try_state::<TrayStatus>() else {
         return;
     };
-    let guard = status.0.lock();
-    if let Ok(item) = guard.as_ref() {
-        if let Some(item) = item.as_ref() {
-            let _ = item.set_text(status_text(spaces));
-        }
-    };
+    update_status(&status.0, |item| {
+        let _ = item.set_text(status_text(spaces));
+    });
+}
+
+fn update_status<T: Clone>(status: &Mutex<Option<T>>, update: impl FnOnce(T)) {
+    // Native menu updates can wait for the UI thread, which also locks this state.
+    let item = status.lock().ok().and_then(|item| item.clone());
+    if let Some(item) = item {
+        update(item);
+    }
 }
 
 /// Shows the core's menu (`window::menu` of the notch's roster); rebuilt
@@ -241,6 +246,17 @@ pub fn tray_set_menu(app: AppHandle, items: Vec<core_menu::MenuItem>) -> Result<
 #[cfg(test)]
 mod tests {
     use super::*;
+
+    #[test]
+    fn status_updates_release_the_lock_before_calling_native_menu_code() {
+        let status = Mutex::new(Some(()));
+        update_status(&status, |()| {
+            *status
+                .try_lock()
+                .expect("the UI thread must be able to lock the status") = None;
+        });
+        assert!(status.lock().unwrap().is_none());
+    }
 
     #[test]
     fn the_icon_is_an_18pt_template_at_2x() {
