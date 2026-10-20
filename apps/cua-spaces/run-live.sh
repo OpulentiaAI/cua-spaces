@@ -32,7 +32,7 @@ elif command -v cua >/dev/null 2>&1; then
   cua_cmd=("$(command -v cua)")
 else
   echo "==> no cua on PATH; building cua-cli from $REPO/libs/cua (release)"
-  cargo build --manifest-path "$REPO/libs/cua/Cargo.toml" -p cua-cli --release
+  cargo build --locked --manifest-path "$REPO/libs/cua/Cargo.toml" -p cua-cli --release --features contrib-e2b
   cua_cmd=("$REPO/libs/cua/target/release/cua")
 fi
 export CUA_BIN="${cua_cmd[0]}"
