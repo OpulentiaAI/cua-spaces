@@ -192,6 +192,7 @@ cargo build --locked --manifest-path ../../libs/cua/Cargo.toml -p cua-cli --rele
 export CUA_BIN="$PWD/../../libs/cua/target/release/cua"
 "$CUA_BIN" config set default.on e2b
 "$CUA_BIN" sb create linux --on e2b --name e2b-desktop
+"$CUA_BIN" spaces add e2b:e2b-desktop --name e2b-desktop
 "$CUA_BIN" doctor e2b:e2b-desktop --strict
 ./run-live.sh --launch
 ```
