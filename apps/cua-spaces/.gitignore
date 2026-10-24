@@ -3,6 +3,8 @@ node_modules/
 
 # Frontend build output
 dist/
+web-dist/
+.herenow/
 *.tsbuildinfo
 
 # Rust build output
