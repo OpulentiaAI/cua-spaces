@@ -197,7 +197,7 @@ from `apps/cua-spaces`:
 ```sh
 pnpm build:web
 "$HOME/.agents/skills/here-now/scripts/publish.sh" web-dist --client devin \
-  --title "Cua Spaces — Browser Example" \
+  --title "Cua Spaces: Browser Example" \
   --description "Main app, notch switcher and onboarding; synthetic data, not live E2B."
 ```
 
