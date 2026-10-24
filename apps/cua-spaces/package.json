@@ -8,6 +8,7 @@
   "scripts": {
     "dev": "node scripts/build-core-wasm.mjs && vite",
     "build": "node scripts/build-core-wasm.mjs && tsc -p tsconfig.json --noEmit && vite build",
+    "build:web": "pnpm build && node scripts/prepare-web-demo.mjs",
     "preview": "vite preview",
     "test": "node scripts/build-core-wasm.mjs && vitest run",
     "test:watch": "vitest",

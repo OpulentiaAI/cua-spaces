@@ -174,12 +174,45 @@ All commands run from `apps/cua-spaces`.
 | Frontend tests              | `pnpm test`                                       |
 | Rust tests                  | `cargo test --manifest-path src-tauri/Cargo.toml` |
 | Frontend type-check + build | `pnpm build`                                      |
+| Static browser example      | `pnpm build:web` (output: `web-dist/`)            |
 | Native build, no bundle     | `pnpm tauri build --no-bundle`                    |
 
 In browser-only dev the native bridge is replaced by a local stand-in with
 fixtures. <http://localhost:1420> shows the notch panel (add `?display=no-notch`
 for the capsule fallback); `?surface=main` shows the main window and
 `?surface=main&onboarding` its welcome flow.
+
+### Publish the browser example to here.now
+
+`pnpm build:web` builds the complete React/Wasm application and packages it in
+`web-dist/`. Its root opens the main app with navigation to the notch switcher
+and onboarding, and a persistent label identifies the synthetic demo data.
+All generated JavaScript, CSS, WebAssembly, audio-worklet and image assets are
+included, along with the app license. Native provisioning and desktop streams
+are not connected; this is not a live E2B client.
+
+Install the official [here.now skill](https://here.now/skill.md), then publish
+from `apps/cua-spaces`:
+
+```sh
+pnpm build:web
+"$HOME/.agents/skills/here-now/scripts/publish.sh" web-dist --client devin \
+  --title "Cua Spaces: Browser Example" \
+  --description "Main app, notch switcher and onboarding; synthetic data, not live E2B."
+```
+
+Use the returned `siteUrl` exactly. An anonymous deployment expires after 24
+hours; keep its private claim URL to retain it in a here.now account. A
+configured `HERENOW_API_KEY` publishes into that account instead. Never commit
+API keys, claim URLs or `.herenow/state.json`, and never publish the repository
+root. Both `.herenow/` and the generated `web-dist/` are ignored. This Wasm
+build is single-threaded and does not need cross-origin isolation.
+
+The [initial example](https://zen-meadow-kd9n.here.now/) was verified by fetching
+all 17 published files and the main, notch and onboarding entry URLs. It expires
+on October 25, 2026 at 15:17 UTC unless claimed. The checked-in build recipe, not
+that temporary URL, is the durable artifact. See
+[validation and remaining E2B gaps](docs/e2b-validation.md).
 
 ### Run with E2B
 
@@ -192,15 +225,20 @@ cargo build --locked --manifest-path ../../libs/cua/Cargo.toml -p cua-cli --rele
 export CUA_BIN="$PWD/../../libs/cua/target/release/cua"
 "$CUA_BIN" config set default.on e2b
 "$CUA_BIN" sb create linux --on e2b --name e2b-desktop
-"$CUA_BIN" spaces add e2b:e2b-desktop --name e2b-desktop
-"$CUA_BIN" doctor e2b:e2b-desktop --strict
-./run-live.sh --launch
 ```
 
-The Space appears in the native app's shared registry. Use the CLI to create
-E2B Spaces: the New Space wizard currently offers local machines, connected
-hosts and your own clouds, not third-party sandbox providers. A browser-only
-`pnpm dev` session still shows fixtures, not the live E2B machine.
+The provider is enabled, but **the E2B flow is not yet healthy end to end**.
+Live validation reached E2B but automatic guest authentication failed, and
+`spaces add e2b:e2b-desktop` was rejected by the current Space ID parser.
+A temporary direct HTTPS attachment showed a live native preview, but the
+full desktop stream was unreachable. Strict doctor reported 107 passed,
+17 failed and 15 skipped after manual guest-access recovery. These are
+remaining integration gaps, not credential/billing blockers. See the
+[validation record](docs/e2b-validation.md) before retrying.
+
+The New Space wizard currently offers local machines, connected hosts and
+your own clouds, not third-party sandbox providers. A browser-only `pnpm dev`
+session still shows fixtures, not the live E2B machine.
 
 E2B accepts Linux amd64 container images; the SDK builds and caches an E2B
 template from the pinned image on first create. Keep the API key out of source

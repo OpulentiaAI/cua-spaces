@@ -1,0 +1,110 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="color-scheme" content="dark" />
+    <meta
+      name="description"
+      content="Explore the complete Cua Spaces browser example: main application, notch switcher, and onboarding. Uses synthetic demo data, not a live E2B sandbox."
+    />
+    <title>Cua Spaces — Browser Example</title>
+    <style>
+      * {
+        box-sizing: border-box;
+      }
+      html,
+      body {
+        margin: 0;
+        width: 100%;
+        height: 100%;
+      }
+      body {
+        display: flex;
+        flex-direction: column;
+        background: #171717;
+        color: #f5f5f5;
+        font:
+          13px/1.4 system-ui,
+          sans-serif;
+      }
+      header {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        gap: 8px 24px;
+        padding: 10px 16px;
+        border-bottom: 1px solid #383838;
+      }
+      h1 {
+        margin: 0;
+        font-size: 14px;
+        font-weight: 600;
+        letter-spacing: -0.02em;
+      }
+      nav {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 6px;
+        margin-left: auto;
+      }
+      a {
+        color: #e8e8e8;
+        padding: 5px 10px;
+        border: 1px solid #444;
+        border-radius: 6px;
+        text-decoration: none;
+      }
+      a:hover {
+        background: #343434;
+      }
+      a:focus-visible {
+        outline: 2px solid #a9c7ff;
+        outline-offset: 3px;
+      }
+      p {
+        flex-basis: 100%;
+        margin: 0;
+        color: #b5b5b5;
+        font-size: 12px;
+      }
+      iframe {
+        display: block;
+        flex: 1;
+        min-height: 0;
+        width: 100%;
+        border: 0;
+        background: #171717;
+      }
+      @media (max-width: 520px) {
+        header {
+          padding: 10px;
+          gap: 8px;
+        }
+        nav {
+          margin-left: 0;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <header>
+      <h1>Cua Spaces · Web example</h1>
+      <nav aria-label="Example views">
+        <a href="/app/index.html?surface=main" target="cua-example">Main app</a>
+        <a href="/app/index.html?surface=portal" target="cua-example">Notch switcher</a>
+        <a href="/app/index.html?surface=main&amp;onboarding" target="cua-example">Onboarding</a>
+      </nav>
+      <p>
+        Browser demo · Synthetic sample data · Native machine provisioning, desktop streams, and E2B
+        access are not connected.
+      </p>
+    </header>
+    <iframe
+      name="cua-example"
+      title="Cua Spaces browser example"
+      src="/app/index.html?surface=main"
+      allow="clipboard-write"
+    ></iframe>
+  </body>
+</html>
