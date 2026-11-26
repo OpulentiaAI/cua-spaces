@@ -56,8 +56,15 @@ jobs:
             fi
           done <<< "$drafts"
 
-          existing=$(gh issue list -R "$REPO" --state open --search "\"$TITLE\" in:title" --json number,title \
-            --jq "[.[]|select(.title==\"$TITLE\")][0].number // empty")
+          # A repository can have issues disabled. The pipeline check must still
+          # run and still fail on a real problem, so the tracking-issue calls
+          # depend on that setting and the report falls back to the run summary.
+          issues_enabled=$(gh api "repos/$REPO" --jq '.has_issues')
+          existing=""
+          if [ "$issues_enabled" = "true" ]; then
+            existing=$(gh issue list -R "$REPO" --state open --search "\"$TITLE\" in:title" --json number,title \
+              --jq "[.[]|select(.title==\"$TITLE\")][0].number // empty")
+          fi
 
           if [ -z "$problems" ]; then
             echo "Release pipeline healthy."
@@ -68,7 +75,12 @@ jobs:
           fi
 
           body="Found by the release pipeline guard ($(date -u +%FT%TZ)):"$'\n\n'"$problems"$'\n'"Fix: relabel the merged PR \`autorelease: tagged\` if its release exists, and delete empty drafts. Check the latest \"Release: Prepare component releases\" run on main."
-          if [ -n "$existing" ]; then
+          if [ "$issues_enabled" != "true" ]; then
+            echo "::warning::This repository has issues disabled, so this run reports in its summary instead of a tracking issue."
+            if [ -n "${GITHUB_STEP_SUMMARY:-}" ]; then
+              printf '%s\n' "$body" >> "$GITHUB_STEP_SUMMARY"
+            fi
+          elif [ -n "$existing" ]; then
             gh issue edit "$existing" -R "$REPO" --body "$body"
           else
             gh issue create -R "$REPO" --title "$TITLE" --body "$body"
