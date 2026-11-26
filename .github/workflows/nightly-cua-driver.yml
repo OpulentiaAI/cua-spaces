@@ -24,6 +24,9 @@ permissions:
   id-token: write
   issues: write
   pull-requests: read
+  # GitHub validates the grants for the whole called chain before it creates a
+  # job, so a scope that no job in this file uses can still be required.
+  statuses: read
 
 concurrency:
   group: nightly-cua-driver
