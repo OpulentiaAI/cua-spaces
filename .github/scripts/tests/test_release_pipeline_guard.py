@@ -29,8 +29,7 @@ case "$*" in
 esac
 """
 
-# Merged 30 days before the test runs, so the 30-minute threshold trips without
-# depending on a fixed date.
+# Far enough in the past that the guard's 30-minute merge threshold trips.
 OLD_MERGE = "2020-01-01T00:00:00Z"
 PENDING_ROW = f"42\t{OLD_MERGE}\trelease: cua-spaces 1.2.3\n"
 
