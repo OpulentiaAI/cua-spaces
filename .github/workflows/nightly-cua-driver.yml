@@ -24,11 +24,8 @@ permissions:
   id-token: write
   issues: write
   pull-requests: read
-  # No nightly job reads commit statuses, but GitHub validates the grants of the
-  # whole called chain before it creates a job, and the tag-only `staging-gate`
-  # job in cd-rust-cua-driver.yml requests `statuses: read`. Without the grant
-  # here the caller inherits `statuses: none`, GitHub rejects the file, and the
-  # scheduled run fails with no jobs and no error log.
+  # GitHub validates the grants for the whole called chain before it creates a
+  # job, so a scope that no job in this file uses can still be required.
   statuses: read
 
 concurrency:
